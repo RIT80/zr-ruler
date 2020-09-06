@@ -1,19 +1,14 @@
 package com.zaqrit.minecraft.forgemod.zrruler.common;
 
 import java.util.stream.Collectors;
+import com.zaqrit.minecraft.forgemod.zrruler.client.ZrRulerClient;
 import com.zaqrit.minecraft.forgemod.zrruler.common.api.constants.ModIds;
-import com.zaqrit.minecraft.forgemod.zrruler.common.capability.ZrRulerCapability;
-import com.zaqrit.minecraft.forgemod.zrruler.common.config.KeyBindings;
-import com.zaqrit.minecraft.forgemod.zrruler.common.eventhandler.ZrRulerEventHandler;
-import com.zaqrit.minecraft.forgemod.zrruler.common.network.PacketHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -41,21 +36,18 @@ public class ZrRuler {
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.register(new ZrRulerEventHandler());
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ZrRulerClient::register);
+
     }
 
     private void setup(final FMLCommonSetupEvent event) {
         // some preinit code
         LOGGER.info("HELLO FROM PREINIT");
-        ZrRulerCapability.register();
-        PacketHandler.register();
+
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
         // do something that can only be done on the client
-
-        KeyBindings.init();
-
 
     }
 
@@ -78,14 +70,6 @@ public class ZrRuler {
     public void onServerStarting(final FMLServerStartingEvent event) {
         // do something when the server starts
         LOGGER.info("HELLO from server starting");
-    }
-
-    @SubscribeEvent
-    public void attachCapabilitiesEntity(final AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof PlayerEntity) {
-            event.addCapability(new ResourceLocation(ModIds.ZR_RULER_ID, ModIds.ZR_RULER_ID),
-                    new ZrRulerCapability());
-        }
     }
 
 }
