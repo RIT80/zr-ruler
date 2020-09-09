@@ -5,10 +5,8 @@ import com.zaqrit.minecraft.forgemod.zrruler.client.ZrRulerClient;
 import com.zaqrit.minecraft.forgemod.zrruler.common.api.constants.ModIds;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -36,7 +34,8 @@ public class ZrRuler {
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ZrRulerClient::register);
+        MinecraftForge.EVENT_BUS.register(new ZrRulerClient());
+
 
     }
 
